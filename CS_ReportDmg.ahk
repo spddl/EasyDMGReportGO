@@ -4,7 +4,7 @@
 
 PlayerName := "spddl.de"
 ConsolePath := "E:\Games\Steam\SteamApps\common\Counter-Strike Global Offensive\csgo\console.log"
-ExecPath := "E:\Games\Steam\SteamApps\common\Counter-Strike Global Offensive\csgo\cfg\scriptexec.cfg"
+ExecPath := "E:\Games\Steam\SteamApps\common\Counter-Strike Global Offensive\csgo\cfg\scriptdamage.cfg"
 
 AutoTrim, On
 
@@ -31,8 +31,7 @@ MonitorConsoleLog:
     }
  
     global Started
-    global DamageString := ""
-    ;global DamageString := "Damage Given To: "
+    global DamageString := "Damage Given To: "
 
     while (LastLine := File.ReadLine()) {
        	if (!Started && RegExMatch(LastLine,"i)-------------------------")) {
@@ -42,18 +41,21 @@ MonitorConsoleLog:
 	    ;MsgBox %DamageString%
             if (DamageString <> "Damage Given To: ") {
                 FileDelete %ExecPath%
-                FileAppend bind "SEMICOLON" "say_team %DamageString%", %ExecPath%
-                SendInput '
+                ;FileAppend bind "h" "say_team %DamageString%", %ExecPath%
+				FileAppend say_team "%DamageString%", %ExecPath%
+				;SendInput '
                 ;Sleep, 50
                 ;SendInput {;}
             }
         }
 
-        if (Started && RegExMatch(LastLine,"i)""(.*)"" - ([0-9]+).*", Damage)) {
+	if (Started && RegExMatch(LastLine,"i)Damage Given to ""(.*)"" - ([0-9]+).*", Damage)) {
             if ((Damage1 <> PlayerName) && (Damage2 > 1) && (Damage2 < 100)) {
-                DamageString := DamageString . "-" . Damage2 . "hp " . Damage1 "  "
+	        DamageString := Damage1 . " -" . Damage2 . "  "
             }
-	}
+	} else {
+;MsgBox %DamageString%
+}
     }
  
    Size0 := Size
